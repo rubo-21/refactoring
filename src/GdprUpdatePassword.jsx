@@ -11,16 +11,16 @@ function GdprUpdatePassword({ redirect, company: companyFromProps }) {
     const [saving, setSaving] = useState(false);
     const [password, setPassword] = useState("");
     const [confirmationPassword, setConfirmationPassword] = useState("");
-    const [passwordError, setPasswordError] = useState("");
+    const [passwordError, setPasswordError] = useState([]);
     const [gdpr, setGdpr] = useState(false);
-    const [gdprError, setGdprError] = useState("");
+    const [gdprError, setGdprError] = useState([]);
     const [company, setCompany] = useState(companyFromProps);
     const [email, setEmail] = useState("");
 
     // universal function to handle password change
     const handlePasswordChange = (state) => (event) => {
         state(event.target.value);
-        setPasswordError("");
+        setPasswordError([]);
     };
 
     const handleCompanyChange = (event) => {
@@ -48,19 +48,19 @@ function GdprUpdatePassword({ redirect, company: companyFromProps }) {
         // check if password is at least 8 characters containing at least 1 uppercase letter and 1 number
         if (passwordRegex.test(password) === false) {
             error = "Password must be at least 8 characters containing at least 1 uppercase letter and 1 number.";
-            setPasswordError(error);
+            setPasswordError(prev => [...prev, error]);
             return;
         }
         // check if passwords match
         if (password !== confirmationPassword) {
             error = "Passwords don't match.";
-            setPasswordError(error);
+            setPasswordError(prev => [...prev, error]);
             return;
         }
         // check if company is entered
         if (gdpr && !company) {
             error = "Please enter your company name.";
-            setGdprError(error);
+            setGdprError(prev => [...prev, error]);
             return;
         }
 
@@ -142,7 +142,7 @@ function GdprUpdatePassword({ redirect, company: companyFromProps }) {
         
             // if there is an error, store error and throw
             if (error) {
-                setPasswordError(error);
+                setPasswordError(prev => [...prev, error]);
                 throw new Error(error);
             }
             if (isSaved) {
